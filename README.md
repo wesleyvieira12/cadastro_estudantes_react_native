@@ -20,3 +20,8 @@
 2. O usuário deve poder ver todos os alunos cadastrados. 
 **Notas: Itens com Especificação Livre devem ter seu formato e validação elaborados pelo candidato.**
 
+## Considerações
+- Foi utilizado a API do IBGE para retornar os estados brasileiros (https://servicodados.ibge.gov.br/api/docs/localidades).
+- Para validar o CPF foi utilizado um codigo pronto disponibilizado pela receita (https://www.devmedia.com.br/validar-cpf-com-javascript/23916).
+- Para validar o CEP foi utilizado a API da ViaCEP (https://viacep.com.br/).
+
