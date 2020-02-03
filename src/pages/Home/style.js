@@ -8,6 +8,7 @@ const styles = StyleSheet.create({
   },
   input: {
     marginTop: 2,
+    paddingLeft: 10,
     width: 350,
     height: 50,
     marginTop: 10,
@@ -22,7 +23,7 @@ const styles = StyleSheet.create({
   btn: {
     bottom:30,
     right:30,
-    backgroundColor:'#dd4',
+    backgroundColor:'#ffcc00',
     width: 60,
     height: 60,
     borderRadius:40,

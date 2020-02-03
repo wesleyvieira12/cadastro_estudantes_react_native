@@ -5,7 +5,7 @@ import Item from '../../components/Item';
 
 import styles from './style';
 
-export default function Home() {
+export default function Home({navigation}) {
   const [DATA,setData] = useState([]);
   const [DATAOLD, setDataOld] = useState([])
 
@@ -87,7 +87,7 @@ export default function Home() {
       />
       
         
-        <TouchableOpacity onPress={() => {}} style={styles.btn}>
+        <TouchableOpacity onPress={() => navigation.navigate('StudentNew')} style={styles.btn}>
           <MaterialIcons size={25} color="#fff" name="add"/>
         </TouchableOpacity>
       

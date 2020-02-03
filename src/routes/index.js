@@ -3,6 +3,7 @@ import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 
 import Home from '../pages/Home';
+import StudentNew from '../pages/Student/New';
 
 const Routes = createAppContainer(
   createStackNavigator({
@@ -10,6 +11,12 @@ const Routes = createAppContainer(
       screen: Home,
       navigationOptions: {
         headerTitle: 'Lista de estudantes',
+      }
+    },
+    StudentNew: {
+      screen: StudentNew,
+      navigationOptions: {
+        headerTitle: 'Cadastrar novo estudante',
       }
     }
   })
