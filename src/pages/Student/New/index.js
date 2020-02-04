@@ -1,7 +1,10 @@
 import React, {useState, useEffect} from 'react';
+
 import { View, TextInput, Text, TouchableOpacity, Picker, ScrollView, Keyboard, AsyncStorage} from 'react-native';
+
 import DateTimePicker from '@react-native-community/datetimepicker';
 import axios from 'axios';
+
 import styles from './style';
 
 export default function New() {
@@ -28,15 +31,15 @@ export default function New() {
     Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
     async function loadCountrys(){    
       const result = await axios.get(`https://servicodados.ibge.gov.br/api/v1/localidades/estados`)
-                          .then(function (response) {  
-                            const new_data = response.data.sort( (a,b) => {
-                              return (a.nome > b.nome) ? 1 : ((b.nome > a.nome) ? -1 : 0);
-                            }); 
-                            setCountrys(new_data);
-                          })
-                          .catch(function (error) {
-                            return "erro";
-                          });
+      .then(function (response) {  
+        const new_data = response.data.sort( (a,b) => {
+          return (a.nome > b.nome) ? 1 : ((b.nome > a.nome) ? -1 : 0);
+        }); 
+        setCountrys(new_data);
+      })
+      .catch(function (error) {
+        return "erro";
+      });
     }
     loadCountrys();
   },[]);
@@ -90,6 +93,7 @@ export default function New() {
   }
   
   async function onSubmit() {
+
     let my_data = {
       id: Math.random().toString(),
       name,
@@ -109,11 +113,13 @@ export default function New() {
   
     const old_data = await AsyncStorage.getItem('students');    
 
+
     if(validateZipCode(zip_code)) {
       alert('CEP é inválido!');
     }else if( !validateCPF(cpf_mother)) {
       alert('CPF da mãe é inválido!');
     } else {
+
       try{
         if(old_data){
           my_data = JSON.stringify(my_data) + "+"+ old_data; 

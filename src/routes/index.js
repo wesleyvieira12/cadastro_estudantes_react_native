@@ -16,7 +16,7 @@ const Routes = createAppContainer(
     StudentNew: {
       screen: StudentNew,
       navigationOptions: {
-        headerTitle: 'Cadastrar novo estudante',
+        headerTitle: 'Dados do estudante',
       }
     }
   })
