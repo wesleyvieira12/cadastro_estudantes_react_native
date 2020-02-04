@@ -123,14 +123,14 @@ export default function New() {
             mode="date"
             display="default"
             style={styles.input}
-            onChange={(event, date) => {setShowBirthday(false);  setBirthday(convertDate(date))} }
+            onChange={(event, date) => {let new_date = convertDate(date); setShowBirthday(false);  setBirthday(new_date)} }
            />
           }
           
         </View>
         <View style={styles.form_group }>
           <Text style={styles.label}>Série de Ingresso</Text>
-          <Picker onValueChange={setSerie} selectedValue={serie}>
+          <Picker onValueChange={(itemValue, itemIndex) => {setSerie(itemValue)}} selectedValue={serie}>
           <Picker.Item label="1º Série" value="1º" />
           <Picker.Item label="2º Série" value="1º" />
           <Picker.Item label="3º Série" value="3º" />
@@ -196,7 +196,7 @@ export default function New() {
         </View>
         <View style={styles.form_group }>
           <Text style={styles.label}>Estado</Text>
-          <Picker onValueChange={setCountry} selectedValue={country}>
+          <Picker onValueChange={(itemValue, itemIndex) => setCountry(itemValue)} selectedValue={country}>
             { countrys.map( res => (
               <Picker.Item key={res.id} label={res.nome} value={res.nome} />
             ))}          
@@ -245,7 +245,7 @@ export default function New() {
             mode="date"
             display="default"
             style={styles.input}
-            onChange={(event, date) => {setShowDatePayment(false);  setDatePayment(convertDate(date))} }
+            onChange={(event, date) => { let new_date = convertDate(date); setShowDatePayment(false);  setDatePayment(new_date)} }
            />
           }
         </View>       
