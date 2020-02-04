@@ -1,12 +1,6 @@
 import React, {useState, useEffect} from 'react';
-import { 
-  View, 
-  TextInput, 
-  Text, 
-  TouchableOpacity, 
-  Picker, 
-  ScrollView, 
-  Keyboard} from 'react-native';
+
+import { View, TextInput, Text, TouchableOpacity, Picker, ScrollView, Keyboard, AsyncStorage} from 'react-native';
 
 import DateTimePicker from '@react-native-community/datetimepicker';
 import axios from 'axios';
@@ -99,31 +93,45 @@ export default function New() {
   }
   
   async function onSubmit() {
-    console.log(validateZipCode(zip_code));
+
+    let my_data = {
+      id: Math.random().toString(),
+      name,
+      birthday,
+      serie,
+      zip_code,
+      street,
+      number,
+      complement,
+      district,
+      city,
+      country,
+      name_mother,
+      cpf_mother,
+      date_payment,
+    };
+  
+    const old_data = await AsyncStorage.getItem('students');    
+
+
     if(validateZipCode(zip_code)) {
       alert('CEP é inválido!');
     }else if( !validateCPF(cpf_mother)) {
       alert('CPF da mãe é inválido!');
     } else {
-      const my_data = {
-        name,
-        birthday,
-        serie,
-        zip_code,
-        street,
-        number,
-        complement,
-        district,
-        city,
-        country,
-        name_mother,
-        cpf_mother,
-        date_payment,
-      }
 
-     
-        await AsyncStorage.setItem('students',[my_data]);
-     
+      try{
+        if(old_data){
+          my_data = JSON.stringify(my_data) + "+"+ old_data; 
+        } else {
+          my_data = JSON.stringify(my_data);
+        } 
+        const response = await AsyncStorage.setItem('students', my_data);
+        alert('Salvo com sucesso!');
+        console.log(my_data);
+      } catch( error ) {
+        alert(error);
+      }
     }
   }
   

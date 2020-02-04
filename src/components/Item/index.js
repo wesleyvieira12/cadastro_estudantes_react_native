@@ -5,7 +5,7 @@ export default function Item( {item} ) {
   return (
     <View style={styles.item}>
       <Text style={styles.title}>{item.name}</Text>
-      <Text style={styles.subtitle}>Data de nascimento: {item.date}</Text>
+      <Text style={styles.subtitle}>Data de nascimento: {item.birthday}</Text>
       <Text style={styles.subtitle}>Série de ingresso: {item.serie}</Text>
     </View>
   );
