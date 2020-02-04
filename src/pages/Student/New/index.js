@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import { View, TextInput, Text, TouchableOpacity, Picker, ScrollView, Keyboard, AsyncStorage} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import axios from 'axios';
+
 import styles from './style';
 
 export default function New() {
@@ -28,15 +29,15 @@ export default function New() {
     Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
     async function loadCountrys(){    
       const result = await axios.get(`https://servicodados.ibge.gov.br/api/v1/localidades/estados`)
-                          .then(function (response) {  
-                            const new_data = response.data.sort( (a,b) => {
-                              return (a.nome > b.nome) ? 1 : ((b.nome > a.nome) ? -1 : 0);
-                            }); 
-                            setCountrys(new_data);
-                          })
-                          .catch(function (error) {
-                            return "erro";
-                          });
+      .then(function (response) {  
+        const new_data = response.data.sort( (a,b) => {
+          return (a.nome > b.nome) ? 1 : ((b.nome > a.nome) ? -1 : 0);
+        }); 
+        setCountrys(new_data);
+      })
+      .catch(function (error) {
+        return "erro";
+      });
     }
     loadCountrys();
   },[]);
