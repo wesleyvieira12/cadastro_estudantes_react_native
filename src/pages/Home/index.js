@@ -1,5 +1,5 @@
 import React,{useState, useEffect} from 'react';
-import { View, FlatList, TouchableOpacity, TextInput} from 'react-native';
+import { View, FlatList, TouchableOpacity, TextInput, AsyncStorage} from 'react-native';
 import {MaterialIcons} from '@expo/vector-icons';
 import Item from '../../components/Item';
 
@@ -10,58 +10,18 @@ export default function Home({navigation}) {
   const [DATAOLD, setDataOld] = useState([])
 
   useEffect(()=>{
-    let my_date = [
-      {
-        id: '1',
-        name: 'Wesley Vieira',
-        date: '04/06/1994',
-        serie: '1º',
-      },
-      {
-        id: '2',
-        name: 'Wesley Vieira',
-        date: '04/06/1994',
-        serie: '1º',
-      },
-      {
-        id: '3',
-        name: 'Wesley Vieira',
-        date: '04/06/1994',
-        serie: '1º',
-      },
-      {
-        id: '4',
-        name: 'Wesley Vieira',
-        date: '04/06/1994',
-        serie: '1º',
-      },
-      {
-        id: '5',
-        name: 'Wesley Vieira',
-        date: '04/06/1994',
-        serie: '1º',
-      },
-      {
-        id: '6',
-        name: 'Wesley Vieira',
-        date: '04/06/1994',
-        serie: '1º',
-      },
-      {
-        id: '7',
-        name: 'Wesley Vieira',
-        date: '04/06/1994',
-        serie: '1º',
-      },
-      {
-        id: '8',
-        name: 'Wesley Vieira',
-        date: '04/06/1994',
-        serie: '1º',
-      },
-    ];
-    setData(my_date);
-    setDataOld(my_date);
+    async function loadStudents() {
+      const students = await AsyncStorage.getItem('students');
+      
+      let array =students.split("+");
+      let my_date = [];
+      for (let index = 0; index < array.length; index++) {
+        array[index] = JSON.parse(array[index]);
+      }
+      setData(array);
+      setDataOld(array);
+    }
+    loadStudents();
   },[]);
   
   
