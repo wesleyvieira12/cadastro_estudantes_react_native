@@ -1,5 +1,5 @@
 import React,{useState, useEffect} from 'react';
-import { View, FlatList, TouchableOpacity, TextInput, AsyncStorage} from 'react-native';
+import { View, FlatList, TouchableOpacity, TextInput, AsyncStorage, TouchableHighlight} from 'react-native';
 import {MaterialIcons} from '@expo/vector-icons';
 import Item from '../../components/Item';
 
@@ -42,7 +42,13 @@ export default function Home({navigation}) {
       <FlatList
         style={styles.list}
         data={DATA}
-        renderItem={({ item }) => <Item item={item} />}
+        renderItem={({ item }) => {
+          <TouchableHighlight onPress={() => navigation.navigate('StudentShow', {
+            id: item.id
+          })}>
+            <Item item={item} />
+          </TouchableHighlight>
+        }}
         keyExtractor={item => item.id}
       />
       
