@@ -5,7 +5,9 @@ import axios from 'axios';
 
 import styles from './style';
 
-export default function New() {
+export default function StudentRegister({navigation}) {
+  const [students, SetStudent] = useState([]);
+  const [id, setId] = useState('');
   const [name, setName] = useState('');
   const [birthday, setBirthday]= useState(null);
   const [serie, setSerie] = useState('');
@@ -25,6 +27,9 @@ export default function New() {
   const [showDatePayment, setShowDatePayment] = useState(false);
 
   useEffect(()=> {
+    if(typeof navigation.state.params !== "undefined"){
+      loadStudent(navigation.state.params.id);
+    }
     Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
     Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
     async function loadCountrys(){    
@@ -41,6 +46,34 @@ export default function New() {
     }
     loadCountrys();
   },[]);
+  
+  async function loadStudent(id) {
+    const students = await AsyncStorage.getItem('students');
+    let array =students.split("+");
+      for (let index = 0; index < array.length; index++) {
+        array[index] = JSON.parse(array[index]);
+      }
+    SetStudent(array);
+    const res = searchStudent(array, id);
+     setId(id);
+     setName(res[0].name);
+     setBirthday(res[0].birthday);
+     setSerie(res[0].serie);
+     setZipCode(res[0].zip_code);
+     setStreet(res[0].street);
+     setNumber(res[0].number);
+     setComplement(res[0].complement);
+     setDistrict(res[0].district);
+     setCity(res[0].city);
+     setCountry(res[0].country);
+     setNameMother(res[0].name_mother);
+     setCpfMother(res[0].cpf_mother);
+     setDatePayment(res[0].date_payment);
+  }
+  
+  function searchStudent(array, id) {
+    return array.filter( res => res.id == id);
+  }
 
   function _keyboardDidShow() {
     setTecladoOn(true);
@@ -91,8 +124,9 @@ export default function New() {
   }
   
   async function onSubmit() {
+    
     let my_data = {
-      id: Math.random().toString(),
+      id: id != '' ? id : Math.random().toString(),
       name,
       birthday,
       serie,
@@ -107,9 +141,22 @@ export default function New() {
       cpf_mother,
       date_payment,
     };
-  
-    const old_data = await AsyncStorage.getItem('students');    
+    
+    let old_data = '';
+    if(id != ''){
+      let new_students = students.filter(res => res.id != id);
+      
+      for (let index = 0; index < new_students.length; index++) {
+        if(old_data == ''){
+          old_data += JSON.stringify(new_students[index]);
+        }else {
+          old_data += "+"+JSON.stringify(new_students[index]);
+        }
+      }
 
+    }else{
+      old_data = await AsyncStorage.getItem('students');    
+    }
     if(validateZipCode(zip_code)) {
       alert('CEP é inválido!');
     }else if( !validateCPF(cpf_mother)) {
@@ -123,7 +170,6 @@ export default function New() {
         } 
         const response = await AsyncStorage.setItem('students', my_data);
         alert('Salvo com sucesso!');
-        console.log(my_data);
       } catch( error ) {
         alert(error);
       }

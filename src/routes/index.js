@@ -3,18 +3,27 @@ import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 
 import Home from '../pages/Home';
-import StudentNew from '../pages/Student/New';
+import StudentRegister from '../pages/Student/Register';
+import StudentShow from '../pages/Student/Show';
+
+import HeaderTitle from  '../components/HeaderTitle';
 
 const Routes = createAppContainer(
   createStackNavigator({
     Home: {
       screen: Home,
       navigationOptions: {
-        headerTitle: 'Lista de estudantes',
+        headerTitle: () => <HeaderTitle/>
       }
     },
-    StudentNew: {
-      screen: StudentNew,
+    StudentRegister: {
+      screen: StudentRegister,
+      navigationOptions: {
+        headerTitle: 'Cadastro',
+      }
+    },
+    StudentShow: {
+      screen: StudentShow,
       navigationOptions: {
         headerTitle: 'Dados do estudante',
       }
