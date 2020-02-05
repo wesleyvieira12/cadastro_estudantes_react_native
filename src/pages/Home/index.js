@@ -2,30 +2,14 @@ import React,{useState, useEffect} from 'react';
 import { View, FlatList, TouchableOpacity, TextInput, AsyncStorage, TouchableHighlight} from 'react-native';
 import {MaterialIcons} from '@expo/vector-icons';
 import Item from '../../components/Item';
-import axios from 'axios';
+import { useSelector, useDispatch } from 'react-redux';
 
 import styles from './style';
 
 export default function Home({navigation}) {
-  const [DATA,setData] = useState([]);
-  const [DATAOLD, setDataOld] = useState([]);
-
-  useEffect(()=>{
-    async function loadStudents() {
-      const students = await AsyncStorage.getItem('students');
-      if(students){
-        let array =students.split("+");
-          for (let index = 0; index < array.length; index++) {
-            array[index] = JSON.parse(array[index]);
-          }
-        setData(array);
-        setDataOld(array);
-      }
-    }
-    loadStudents();
-    
-  },[]);
-  
+  const DATA = useSelector(state => state.data);
+  const DATAOLD = useSelector(state => state.data);  
+  const dispatch = useDispatch();
   
   function searchStudent( text ) {
     const newData = DATAOLD.filter( res => res.name.indexOf(text) >= 0);
