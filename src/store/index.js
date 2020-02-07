@@ -1,31 +1,16 @@
 import { createStore } from 'redux';
-import { AsyncStorage } from 'react-native';
+import {AsyncStorage} from 'react-native';
+import { persistStore, persistReducer} from 'redux-persist';
 
-const INITIAL_STATE = {
-    data: []
-}
-// async function loadStudents() {
-//     const students = await AsyncStorage.getItem('students');
-//     let array = []
-//     if(students){
-//         array =students.split("+");
-//         for (let index = 0; index < array.length; index++) {
-//             array[index] = JSON.parse(array[index]);
-//         }
-//     }
-    
-// }
+import students from './reducers/students'; 
 
-function students(state = INITIAL_STATE, action) {
-    console.log("Rodou store!!!!");
-    switch( action.type ){
-        case 'ADD_STUDENT':
-            return {...state, data: [...state.data, action.title]};
-        default:
-            return state; 
-    }
-}
+const persistConfig = {
+  key: 'root',
+  storage: AsyncStorage,
+};
 
-const store = createStore(students);
+const persistedReducer = persistReducer(persistConfig, students);
 
-export default store;
+const store = createStore(persistedReducer);
+const persistor = persistStore(store);
+export {store, persistor};
