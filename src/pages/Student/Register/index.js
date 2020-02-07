@@ -113,7 +113,21 @@ export default function StudentRegister({navigation}) {
     if (resto != parseInt(cpf.substring(10, 11) ) ) return false;
     return true;
   }
-  
+  function isNotEmpty( array ) {
+    const new_array = array.filter( res => (res == '' || res == null));
+    return new_array.length<=0;
+  }
+
+  function compareDates(date) {
+    let parts = date.split('/') // separa a data pelo caracter '/'
+    let today = new Date()      // pega a data atual
+    
+    date = new Date(parts[2], parts[1] - 1, parts[0]) // formata 'date'
+    // compara se a data informada é maior que a data atual
+    // e retorna true ou false
+    return date >= today;
+  }
+
   async function onSubmit() {
     
     let my_data = {
@@ -132,32 +146,54 @@ export default function StudentRegister({navigation}) {
       cpf_mother,
       date_payment,
     };
-
-    if(validateZipCode(zip_code)) {
-      alert('CEP é inválido!');
-    }else if( !validateCPF(cpf_mother)) {
-      alert('CPF da mãe é inválido!');
-    } else {
-      dispatch(ActionsStudent.addStudent(my_data));
-      alert('Salvo com sucesso!');
+    if(isNotEmpty([
+      name,
+      birthday,
+      serie,
+      zip_code,
+      street,
+      number,
+      district,
+      city,
+      country,
+      name_mother,
+      cpf_mother,
+      date_payment
+    ])){
+      if(validateZipCode(zip_code)) {
+        alert('CEP é inválido!');
+      }else if(!compareDates(date_payment) ) {
+        alert('Data de Pagamento está incorreta!');
+      }else if( !Number.isInteger(number)) {
+        alert('O numero da casa está incorreto');
+      }else if( !validateCPF(cpf_mother)) {
+        alert('CPF da mãe é inválido!');
+      } else {
+        dispatch(ActionsStudent.addStudent(my_data));
+        alert('Salvo com sucesso!');
+      }
+    }else{
+      alert("Preencha todos os campos obrigatórios!");
     }
+    
   }
   
   return (
     <ScrollView>
       <View style={teclado_on == false ? styles.container : styles.container_teclado}>
         <View style={styles.form_group}>
-          <Text style={styles.label}>Nome</Text>
+          <Text style={styles.label}>Nome*</Text>
           <TextInput
             style={styles.input}
             placeholder="Nome completo"
             autoCorrect={false}
             value={name}
             onChangeText={setName}
-            maxLength={100}        />
+            maxLength={100}
+                    />
         </View>
         <View style={styles.form_group}>
-          <Text style={styles.label}>Data de Nascimento</Text>
+          <Text style={styles.label}>Data de Nascimento*</Text>
           <TextInputMask
             type={'datetime'}
             options={{
@@ -170,7 +206,7 @@ export default function StudentRegister({navigation}) {
           
         </View>
         <View style={styles.form_group }>
-          <Text style={styles.label}>Série de Ingresso</Text>
+          <Text style={styles.label}>Série de Ingresso*</Text>
           <Picker onValueChange={(itemValue, itemIndex) => {setSerie(itemValue)}} selectedValue={serie}>
           <Picker.Item label="1º Série" value="1º" />
           <Picker.Item label="2º Série" value="1º" />
@@ -185,7 +221,7 @@ export default function StudentRegister({navigation}) {
         </View>
         <Text style={styles.top_label}>Endereço</Text>
         <View style={styles.form_group}>
-          <Text style={styles.label}>CEP</Text>
+          <Text style={styles.label}>CEP*</Text>
           <TextInput
             style={styles.input}
             placeholder="sem digito"
@@ -195,7 +231,7 @@ export default function StudentRegister({navigation}) {
           />
         </View>
         <View style={styles.form_group}>
-          <Text style={styles.label}>Rua</Text>
+          <Text style={styles.label}>Rua*</Text>
           <TextInput
             style={styles.input}
             placeholder="Nome da rua"
@@ -205,7 +241,7 @@ export default function StudentRegister({navigation}) {
             maxLength={120}        />
         </View>
         <View style={styles.form_group}>
-          <Text style={styles.label}>Numero</Text>
+          <Text style={styles.label}>Numero*</Text>
           <TextInput
             style={styles.input}
             placeholder="Numero da casa"
@@ -216,7 +252,7 @@ export default function StudentRegister({navigation}) {
             maxLength={100}        />
         </View>
         <View style={styles.form_group}>
-          <Text style={styles.label}>Complemento</Text>
+          <Text style={styles.label}>Complemento (opcional)</Text>
           <TextInput
             style={styles.input}
             placeholder="Complemento"
@@ -226,7 +262,7 @@ export default function StudentRegister({navigation}) {
             maxLength={50}        />
         </View>
         <View style={styles.form_group}>
-          <Text style={styles.label}>Bairro</Text>
+          <Text style={styles.label}>Bairro*</Text>
           <TextInput
             style={styles.input}
             placeholder="Nome do bairro"
@@ -236,7 +272,7 @@ export default function StudentRegister({navigation}) {
             maxLength={100}        />
         </View>
         <View style={styles.form_group }>
-          <Text style={styles.label}>Estado</Text>
+          <Text style={styles.label}>Estado*</Text>
           <Picker onValueChange={(itemValue, itemIndex) => setCountry(itemValue)} selectedValue={country}>
             { countrys.map( res => (
               <Picker.Item key={res.id} label={res.nome} value={res.nome} />
@@ -244,7 +280,7 @@ export default function StudentRegister({navigation}) {
         </Picker>
         </View>
         <View style={styles.form_group}>
-          <Text style={styles.label}>Cidade</Text>
+          <Text style={styles.label}>Cidade*</Text>
           <TextInput
             style={styles.input}
             placeholder="Nome da cidade"
@@ -255,7 +291,7 @@ export default function StudentRegister({navigation}) {
         </View>
         <Text style={styles.top_label}>Dados da mãe</Text>
         <View style={styles.form_group}>
-          <Text style={styles.label}>Nome</Text>
+          <Text style={styles.label}>Nome*</Text>
           <TextInput
             style={styles.input}
             placeholder="Nome da mãe"
@@ -266,7 +302,7 @@ export default function StudentRegister({navigation}) {
           />
         </View>
         <View style={styles.form_group}>
-          <Text style={styles.label}>CPF</Text>
+          <Text style={styles.label}>CPF*</Text>
           <TextInput
             style={styles.input}
             placeholder="somente numero"
@@ -277,7 +313,7 @@ export default function StudentRegister({navigation}) {
             maxLength={11}        />
         </View>
         <View style={styles.form_group}>
-          <Text style={styles.label}>Data preferencial para pagamento da mensalidade </Text>
+          <Text style={styles.label}>Data preferencial para pagamento da mensalidade*</Text>
           <TextInputMask
             type={'datetime'}
             options={{
