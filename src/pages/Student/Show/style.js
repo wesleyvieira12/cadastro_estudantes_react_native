@@ -19,11 +19,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#e68a00',
         padding: 15,
     },
-    btn_delete: {
-        marginTop: 15,
-        backgroundColor: '#e60000',
-        padding: 15,
-    },
+    
     group: {
         left: 20,
         marginTop: 10,
@@ -33,7 +29,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
     },
     text: {
-        fontSize: 15,
+        fontSize: 15
     },
     
 });

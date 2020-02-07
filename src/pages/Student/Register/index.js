@@ -1,12 +1,21 @@
 import React, {useState, useEffect} from 'react';
-import { View, TextInput, Text, TouchableOpacity, Picker, ScrollView, Keyboard, AsyncStorage} from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import { View, TextInput, Text, TouchableOpacity, Picker, ScrollView, Keyboard} from 'react-native';
+import { TextInputMask } from 'react-native-masked-text'
 import axios from 'axios';
+import { useSelector, useDispatch } from 'react-redux';
 
+import * as ActionsStudent from '../../../store/actions/students';
 import styles from './style';
 
 export default function StudentRegister({navigation}) {
-  const [students, SetStudent] = useState([]);
+  const student = useSelector(state => state.data.filter( res => {
+    if(typeof navigation.state.params !== "undefined"){
+      return res.id == navigation.state.params.id;
+    }
+    return false;
+  }));
+  const dispatch = useDispatch();
+
   const [id, setId] = useState('');
   const [name, setName] = useState('');
   const [birthday, setBirthday]= useState(null);
@@ -27,54 +36,46 @@ export default function StudentRegister({navigation}) {
   const [showDatePayment, setShowDatePayment] = useState(false);
 
   useEffect(()=> {
-    if(typeof navigation.state.params !== "undefined"){
-      loadStudent(navigation.state.params.id);
-    }
+    loadStudent();
+  },[]);
+  useEffect(()=> {
     Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
     Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
-    async function loadCountrys(){    
-      const result = await axios.get(`https://servicodados.ibge.gov.br/api/v1/localidades/estados`)
-      .then(function (response) {  
-        const new_data = response.data.sort( (a,b) => {
-          return (a.nome > b.nome) ? 1 : ((b.nome > a.nome) ? -1 : 0);
-        }); 
-        setCountrys(new_data);
-      })
-      .catch(function (error) {
-        return "erro";
-      });
-    }
+  },[]);
+  useEffect(()=> {  
     loadCountrys();
   },[]);
-  
-  async function loadStudent(id) {
-    const students = await AsyncStorage.getItem('students');
-    let array =students.split("+");
-      for (let index = 0; index < array.length; index++) {
-        array[index] = JSON.parse(array[index]);
-      }
-    SetStudent(array);
-    const res = searchStudent(array, id);
-     setId(id);
-     setName(res[0].name);
-     setBirthday(res[0].birthday);
-     setSerie(res[0].serie);
-     setZipCode(res[0].zip_code);
-     setStreet(res[0].street);
-     setNumber(res[0].number);
-     setComplement(res[0].complement);
-     setDistrict(res[0].district);
-     setCity(res[0].city);
-     setCountry(res[0].country);
-     setNameMother(res[0].name_mother);
-     setCpfMother(res[0].cpf_mother);
-     setDatePayment(res[0].date_payment);
+  async function loadCountrys(){    
+    const result = await axios.get(`https://servicodados.ibge.gov.br/api/v1/localidades/estados`)
+    .then(function (response) {  
+      const new_data = response.data.sort( (a,b) => {
+        return (a.nome > b.nome) ? 1 : ((b.nome > a.nome) ? -1 : 0);
+      }); 
+      setCountrys(new_data);
+    })
+    .catch(function (error) {
+      return "erro";
+    });
+  }
+  async function loadStudent() {
+    if(student.length >0){
+     setId(student[0].id);
+     setName(student[0].name);
+     setBirthday(student[0].birthday);
+     setSerie(student[0].serie);
+     setZipCode(student[0].zip_code);
+     setStreet(student[0].street);
+     setNumber(student[0].number);
+     setComplement(student[0].complement);
+     setDistrict(student[0].district);
+     setCity(student[0].city);
+     setCountry(student[0].country);
+     setNameMother(student[0].name_mother);
+     setCpfMother(student[0].cpf_mother);
+     setDatePayment(student[0].date_payment);
+    }
   }
   
-  function searchStudent(array, id) {
-    return array.filter( res => res.id == id);
-  }
-
   function _keyboardDidShow() {
     setTecladoOn(true);
   }
@@ -113,20 +114,10 @@ export default function StudentRegister({navigation}) {
     return true;
   }
   
-  function convertDate( date ) {
-    date = new Date(date);
-    let dia  = date.getDate().toString();
-    let diaFormat = (dia.length == 1) ? '0'+dia : dia;
-    let mes  = (date.getMonth()+1).toString(); //+1 pois no getMonth Janeiro começa com zero
-    let mesFormat = (mes.length == 1) ? '0'+mes : mes;
-    let anoFormat = date.getFullYear();
-    return diaFormat+"/"+mesFormat+"/"+anoFormat;
-  }
-  
   async function onSubmit() {
     
     let my_data = {
-      id: id != '' ? id : Math.random().toString(),
+      id: id != '' ? id : (Math.random()*10).toString(),
       name,
       birthday,
       serie,
@@ -141,38 +132,14 @@ export default function StudentRegister({navigation}) {
       cpf_mother,
       date_payment,
     };
-    
-    let old_data = '';
-    if(id != ''){
-      let new_students = students.filter(res => res.id != id);
-      
-      for (let index = 0; index < new_students.length; index++) {
-        if(old_data == ''){
-          old_data += JSON.stringify(new_students[index]);
-        }else {
-          old_data += "+"+JSON.stringify(new_students[index]);
-        }
-      }
 
-    }else{
-      old_data = await AsyncStorage.getItem('students');    
-    }
     if(validateZipCode(zip_code)) {
       alert('CEP é inválido!');
     }else if( !validateCPF(cpf_mother)) {
       alert('CPF da mãe é inválido!');
     } else {
-      try{
-        if(old_data){
-          my_data = JSON.stringify(my_data) + "+"+ old_data; 
-        } else {
-          my_data = JSON.stringify(my_data);
-        } 
-        const response = await AsyncStorage.setItem('students', my_data);
-        alert('Salvo com sucesso!');
-      } catch( error ) {
-        alert(error);
-      }
+      dispatch(ActionsStudent.addStudent(my_data));
+      alert('Salvo com sucesso!');
     }
   }
   
@@ -191,17 +158,15 @@ export default function StudentRegister({navigation}) {
         </View>
         <View style={styles.form_group}>
           <Text style={styles.label}>Data de Nascimento</Text>
-          <TouchableOpacity onPress={() => setShowBirthday(true)} style={styles.btn}>
-            <Text style={styles.text_btn}>{birthday != null ? birthday :"Selecionar"}</Text>
-          </TouchableOpacity>
-          { showBirthday && <DateTimePicker
-            value={birthday != null ? birthday : Date.now()}
-            mode="date"
-            display="default"
-            style={styles.input}
-            onChange={(event, date) => {let new_date = convertDate(date); setShowBirthday(false);  setBirthday(new_date)} }
-           />
-          }
+          <TextInputMask
+            type={'datetime'}
+            options={{
+              format: 'DD/MM/YYYY'
+            }}
+            value={birthday}
+            placeholder="dd/mm/yyyy"
+            onChangeText={text => {setBirthday(text)}}
+          />
           
         </View>
         <View style={styles.form_group }>
@@ -313,17 +278,15 @@ export default function StudentRegister({navigation}) {
         </View>
         <View style={styles.form_group}>
           <Text style={styles.label}>Data preferencial para pagamento da mensalidade </Text>
-          <TouchableOpacity onPress={() => setShowDatePayment(true)} style={styles.btn}>
-            <Text style={styles.text_btn}>{date_payment != null ? date_payment :"Selecionar"}</Text>
-          </TouchableOpacity>
-          { showDatePayment && <DateTimePicker
-            value={date_payment != null ? date_payment : Date.now()}
-            mode="date"
-            display="default"
-            style={styles.input}
-            onChange={(event, date) => { let new_date = convertDate(date); setShowDatePayment(false);  setDatePayment(new_date)} }
-           />
-          }
+          <TextInputMask
+            type={'datetime'}
+            options={{
+              format: 'DD/MM/YYYY'
+            }}
+            value={date_payment}
+            placeholder="dd/mm/yyyy"
+            onChangeText={text => {setDatePayment(text)}}
+          />
         </View>       
         <TouchableOpacity onPress={onSubmit} style={styles.btn}>
           <Text style={styles.text_btn}>Salvar</Text>
